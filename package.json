@@ -12,6 +12,9 @@
 	},
 	"author": "",
 	"license": "ISC",
+	"engines": {
+		"node": "16.14.2"
+	},
 	"dependencies": {
 		"@commitlint/cli": "^17.5.1",
 		"@commitlint/config-conventional": "^17.4.4",
