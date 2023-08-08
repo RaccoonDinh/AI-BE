@@ -8,13 +8,12 @@
 		"build": "tsoa spec-and-routes && tsc",
 		"start": "node dist/server.js",
 		"dev": "concurrently \"nodemon\" \"nodemon -x tsoa spec-and-routes\"",
-		"prepare": "husky install"
+		"prepare": "husky install",
+		"tsoa": "tsoa routes"
 	},
 	"author": "",
 	"license": "ISC",
-	"engines": {
-		"node": "16.14.2"
-	},
+
 	"dependencies": {
 		"@commitlint/cli": "^17.5.1",
 		"@commitlint/config-conventional": "^17.4.4",
