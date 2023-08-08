@@ -12,7 +12,7 @@ dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT;
-const allowedOrigins: string[] = ['https://aitools.vietnamstartup.io/', 'http://localhost:3000']; // Thay thế bằng tên miền frontend thực tế của bạn và thêm bất kỳ tên miền khác bạn muốn cho phép.
+const allowedOrigins: string[] = ['https://aitools.vietnamstartup.io/', 'http://localhost:5173']; // Thay thế bằng tên miền frontend thực tế của bạn và thêm bất kỳ tên miền khác bạn muốn cho phép.
 const corsOptions: cors.CorsOptions = {
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
     if (allowedOrigins.includes(origin!) || !origin) {
@@ -23,7 +23,7 @@ const corsOptions: cors.CorsOptions = {
   },
 };
 
-app.use(cors(corsOptions));
+app.use(cors());
 
 app.use(
   bodyParser.urlencoded({
