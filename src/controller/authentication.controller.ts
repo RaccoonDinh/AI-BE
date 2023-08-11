@@ -1,10 +1,4 @@
-import {
-  Body,
-  Controller,
-  Post,
-  Route,
-  Tags,
-} from "tsoa";
+import { Body, Controller, Post, Route, Tags } from "tsoa";
 import { AuthenticationService } from "../services/authentication.service";
 import { ICreateUser, IEmailVerify, ILoginUser } from "../dto/requests";
 import { UsersService } from "../services";
@@ -13,9 +7,7 @@ import { UsersService } from "../services";
 @Route("authenticate")
 export class AuthenticationController extends Controller {
   @Post("/login")
-  public async loginUser(
-    @Body() dto: ILoginUser
-  ) {
+  public async loginUser(@Body() dto: ILoginUser) {
     return AuthenticationService.login(dto);
   }
   @Post("/send-code-email")

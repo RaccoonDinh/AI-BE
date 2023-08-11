@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import jwt from "jsonwebtoken";
 import {
   ERROR_PASSWORD,
@@ -42,6 +41,7 @@ export class AuthenticationService {
       if (!validPassword) {
         return handleResFailure(ERROR_PASSWORD, HttpStatus.NOT_FOUND);
       }
+      // console.log(validPassword);
       const token = AuthenticationService.generateToken({
         userId: user._id.toString(),
         role: "user",
@@ -57,6 +57,33 @@ export class AuthenticationService {
       return handleResFailure(ERROR_LOGIN, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+
+  static async sign(accountParams: string) {
+    try {
+      const user = await User.findOne({ phone: accountParams });
+      if (!user) {
+        return handleResFailure(ERROR_USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+      }
+      const token = AuthenticationService.generateToken({
+        userId: user._id.toString(),
+        role: "user",
+      });
+      console.log(user);
+      console.log("token: ", token);
+      return handlerResSuccess<UserAuthenticate>(LOGIN_SUCCESS, {
+        token,
+        name: user.name,
+      });
+    } catch (error) {
+      console.log("error: ", error);
+      return handleResFailure(ERROR_LOGIN, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+
+
+
   static async logout(res: ExResponse) {
     res.clearCookie("token");
     return handlerResSuccess<string>(LOGOUT_SUCCESS, "logged out succesfully");
@@ -72,7 +99,6 @@ export class AuthenticationService {
     }
     return result;
   }
-
   static async sendVerifyCode(request: IEmailVerify) {
     try {
       const email = await User.findOne({ email: request.email });
@@ -85,13 +111,13 @@ export class AuthenticationService {
         port: 2525,
         host: "smtp.elasticemail.com",
         auth: {
-          user: "vnsaitools@gmail.com",
+          user: "maihuynhtrung0@gmail.com",
           pass: process.env.password as string,
         },
       });
       // Thiết lập nội dung email
       const mailOptions = {
-        from: "vnsaitools@gmail.com",
+        from: "maihuynhtrung0@gmail.com",
         to: request.email,
         subject: "Mã xác thực",
         text: `Mã xác thực của bạn là: ${code}`,

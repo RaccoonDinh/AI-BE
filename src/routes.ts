@@ -91,7 +91,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UserResDTO": {
         "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_ICreateUser.name_"},{"dataType":"nestedObjectLiteral","nestedProperties":{"_id":{"dataType":"string","required":true}}}],"validators":{}},
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_ICreateUser.name_"},{"dataType":"nestedObjectLiteral","nestedProperties":{"_id":{"dataType":"string","required":true}}},{"dataType":"nestedObjectLiteral","nestedProperties":{"token":{"dataType":"string","required":true}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ICreateUser": {
@@ -111,17 +111,6 @@ const models: TsoaRoute.Models = {
         "properties": {
             "userId": {"dataType":"string","required":true},
             "role": {"dataType":"string","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "IUserInfo": {
-        "dataType": "refObject",
-        "properties": {
-            "name": {"dataType":"string","required":true},
-            "email": {"dataType":"string","required":true},
-            "phone": {"dataType":"string","required":true},
-            "address": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },

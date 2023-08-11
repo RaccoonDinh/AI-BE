@@ -4,10 +4,10 @@
 import {
   CREATE_USER_SUCCESS,
   ERROR_CREATE_USER,
-  ERROR_GET_USER_BY_ID,
+  ERROR_GET_USER,
   ERROR_PASSWORD_NOT_MATCH,
   ERROR_USER_NOT_FOUND,
-  FIND_USER_BY_ID_SUCCESS,
+  FIND_USER_SUCCESS,
   LOGIN_FAIL,
   LOGIN_SUCCESS,
 } from "../constants";
@@ -15,7 +15,6 @@ import { HttpStatus } from "../constants/enum";
 import {
   AdminLogin,
   ICreateAdmin,
-  IUpdateAdmin,
   ResAdmin,
 } from "../dto/requests";
 import { AdminResDTO } from "../dto/responses";
@@ -81,7 +80,7 @@ export class AdminService {
   static async findAdminById(adminId: string) {
     const admin = await Admin.findById(adminId);
     if (!admin) {
-      return handleResFailure(ERROR_GET_USER_BY_ID, HttpStatus.NOT_FOUND);
+      return handleResFailure(ERROR_GET_USER, HttpStatus.NOT_FOUND);
     }
 
     const res: ResAdmin = {
@@ -89,6 +88,6 @@ export class AdminService {
       username: admin?.username,
     };
 
-    return handlerResSuccess(FIND_USER_BY_ID_SUCCESS, res);
+    return handlerResSuccess(FIND_USER_SUCCESS, res);
   }
 }

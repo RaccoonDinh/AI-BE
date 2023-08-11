@@ -12,16 +12,6 @@ dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT;
-const allowedOrigins: string[] = ['https://aitools.vietnamstartup.io/', 'http://localhost:5173']; // Thay thế bằng tên miền frontend thực tế của bạn và thêm bất kỳ tên miền khác bạn muốn cho phép.
-const corsOptions: cors.CorsOptions = {
-  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-    if (allowedOrigins.includes(origin!) || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-};
 
 app.use(cors());
 
@@ -32,8 +22,6 @@ app.use(
 );
 app.use(bodyParser.json());
 app.use(cors());
-// app.use(passport.initialize());
-// app.use(passport.session());
 
 initMongoDB()
   .then(() => {

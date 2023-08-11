@@ -6,6 +6,7 @@ export interface IUser {
   password: string;
   phone: string;
   address: string;
+  active: boolean;
 }
 
 export interface IUserModel extends IUser, Document, SchemaTimestampsConfig {}
@@ -17,6 +18,7 @@ export const UserSchema: Schema = new Schema(
     password: { type: String, require: true },
     phone: { type: String, require: true },
     address: { type: String, require: true },
+    active: { type: Boolean, require: true },
   },
   { timestamps: true }
 );

@@ -157,6 +157,17 @@
 							"_id"
 						],
 						"type": "object"
+					},
+					{
+						"properties": {
+							"token": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"token"
+						],
+						"type": "object"
 					}
 				]
 			},
@@ -200,30 +211,6 @@
 				"required": [
 					"userId",
 					"role"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"IUserInfo": {
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"email": {
-						"type": "string"
-					},
-					"phone": {
-						"type": "string"
-					},
-					"address": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"name",
-					"email",
-					"phone",
-					"address"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -596,7 +583,7 @@
 										{
 											"properties": {
 												"data": {
-													"$ref": "#/components/schemas/IUserInfo"
+													"type": "boolean"
 												},
 												"message": {
 													"type": "string"
