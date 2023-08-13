@@ -7,6 +7,7 @@ export type UserResDTO = Pick<ICreateUser, "name"> & { _id: string } & {
 export type AdminResDTO = Pick<ICreateAdmin, "name"> & { _id: string };
 
 export interface IUserInfo {
+  _id: string;
   name: string;
   email: string;
   phone: string;

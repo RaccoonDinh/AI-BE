@@ -4,11 +4,13 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Route,
   Security,
   Request,
-  Path,
   Tags,
+  Query,
+  Path,
 } from "tsoa";
 import { UsersService } from "../services";
 import { ICreateUser, ISignJWT } from "../dto/requests/user.dto";
@@ -32,13 +34,26 @@ export class UsersController extends Controller {
   }
 
   @Security("jwt", ["user"])
-  @Get()
-  public getUser(@Request() request: IGetUserAuthInfoRequest) {
+  @Get("/get-user")
+  public findUserById(@Request() request: IGetUserAuthInfoRequest) {
     return UsersService.getUser(request.user.userId);
   }
 
-  @Get("/{userId}")
-  public findUserById(@Path() userId: string) {
-    return UsersService.findUserById(userId);
+  @Security("jwt", ["admin"])
+  @Get("/find-user-by-phone")
+  public getUserByPhone(@Query() phone: string) {
+    return UsersService.findUserByPhone(phone);
+  }
+
+  @Security("jwt", ["admin"])
+  @Put("/{id}")
+  public activeUser(@Path() id: string) {
+    return UsersService.activeUser(id);
+  }
+
+  @Security("jwt", ["admin"])
+  @Get("/get-all-user")
+  public getAllUser() {
+    return UsersService.getAllUser();
   }
 }

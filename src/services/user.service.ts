@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // src/users/usersService.ts
-import jwt from "jsonwebtoken";
 import {
+  ACTIVE_USER_SUCCESS,
   CREATE_USER_SUCCESS,
   ERROR_CREATE_USER,
   ERROR_GET_USER,
@@ -90,30 +90,7 @@ export class UsersService {
         return handleResFailure(ERROR_USER_NOT_FOUND, HttpStatus.NOT_FOUND);
       }
       const res: IUserInfo = {
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        address: user.address,
-        active: user.active,
-      };
-
-      return handlerResSuccess(FIND_USER_SUCCESS, res.active);
-    } catch (error: any) {
-      console.log("error: ", error);
-      return handleResFailure(
-        error.error ? error.error : ERROR_GET_USER,
-        error.statusCode ? error.statusCode : HttpStatus.BAD_REQUEST
-      );
-    }
-  }
-
-  static async findUserByPhone(phone: string) {
-    try {
-      const user = await User.findOne({ phone: phone });
-      if (!user) {
-        return handleResFailure(ERROR_USER_NOT_FOUND, HttpStatus.NOT_FOUND);
-      }
-      const res: IUserInfo = {
+        _id: user._id,
         name: user.name,
         email: user.email,
         phone: user.phone,
@@ -131,19 +108,72 @@ export class UsersService {
     }
   }
 
-  static async activeUser(phone: string) {
+  static async findUserByPhone(phone: string) {
     try {
       const user = await User.findOne({ phone: phone });
       if (!user) {
         return handleResFailure(ERROR_USER_NOT_FOUND, HttpStatus.NOT_FOUND);
       }
-      user.active = true;
+      const res: IUserInfo = {
+        _id: user._id.toString(),
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        address: user.address,
+        active: user.active,
+      };
+
+      return handlerResSuccess(FIND_USER_SUCCESS, res);
     } catch (error: any) {
       console.log("error: ", error);
       return handleResFailure(
         error.error ? error.error : ERROR_GET_USER,
         error.statusCode ? error.statusCode : HttpStatus.BAD_REQUEST
       );
+    }
+  }
+
+  static async activeUser(id: string) {
+    try {
+      const user = await User.findOne({ _id: id });
+      if (!user) {
+        return handleResFailure(ERROR_USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+      }
+      user.active = true;
+
+      user.save();
+
+      return handlerResSuccess(ACTIVE_USER_SUCCESS, true);
+    } catch (error: any) {
+      console.log("error: ", error);
+      return handleResFailure(
+        error.error ? error.error : ERROR_GET_USER,
+        error.statusCode ? error.statusCode : HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
+  static async getAllUser() {
+    try {
+      const userArray: IUserInfo[] = [];
+      const allUser = await User.find({});
+      if (!allUser) {
+        return handleResFailure(ERROR_USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+      }
+      allUser.map((user) =>
+        userArray.push({
+          _id: user._id.toString(),
+          name: user.name,
+          phone: user.phone,
+          email: user.email,
+          address: user.address,
+          active: user.active,
+        })
+      );
+      return handlerResSuccess<IUserInfo[]>(FIND_USER_SUCCESS, userArray);
+    } catch (error) {
+      console.log("error", error);
+      return;
     }
   }
 }

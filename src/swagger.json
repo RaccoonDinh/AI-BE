@@ -64,6 +64,47 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"Pick_ICreateUser.name_": {
+				"properties": {
+					"name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"UserResDTO": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/Pick_ICreateUser.name_"
+					},
+					{
+						"properties": {
+							"_id": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"_id"
+						],
+						"type": "object"
+					},
+					{
+						"properties": {
+							"token": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"token"
+						],
+						"type": "object"
+					}
+				]
+			},
 			"Pick_ICreateAdmin.username-or-password_": {
 				"properties": {
 					"username": {
@@ -130,47 +171,6 @@
 			"IEmailVerify": {
 				"$ref": "#/components/schemas/Pick_ICreateUser.email_"
 			},
-			"Pick_ICreateUser.name_": {
-				"properties": {
-					"name": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"name"
-				],
-				"type": "object",
-				"description": "From T, pick a set of properties whose keys are in the union K"
-			},
-			"UserResDTO": {
-				"allOf": [
-					{
-						"$ref": "#/components/schemas/Pick_ICreateUser.name_"
-					},
-					{
-						"properties": {
-							"_id": {
-								"type": "string"
-							}
-						},
-						"required": [
-							"_id"
-						],
-						"type": "object"
-					},
-					{
-						"properties": {
-							"token": {
-								"type": "string"
-							}
-						},
-						"required": [
-							"token"
-						],
-						"type": "object"
-					}
-				]
-			},
 			"ICreateUser": {
 				"properties": {
 					"name": {
@@ -211,6 +211,38 @@
 				"required": [
 					"userId",
 					"role"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IUserInfo": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					},
+					"active": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"_id",
+					"name",
+					"email",
+					"phone",
+					"address",
+					"active"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -340,7 +372,7 @@
 										{
 											"properties": {
 												"data": {
-													"type": "string"
+													"$ref": "#/components/schemas/UserResDTO"
 												},
 												"message": {
 													"type": "string"
@@ -569,9 +601,142 @@
 						}
 					}
 				}
-			},
+			}
+		},
+		"/users/sign-jwt-token": {
+			"post": {
+				"operationId": "SignJwtToken",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ISignJWT"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/get-user": {
 			"get": {
-				"operationId": "GetUser",
+				"operationId": "FindUserById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{},
+										{
+											"properties": {
+												"data": {
+													"$ref": "#/components/schemas/IUserInfo"
+												},
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"data",
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"jwt": [
+							"user"
+						]
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/users/find-user-by-phone": {
+			"get": {
+				"operationId": "GetUserByPhone",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{},
+										{
+											"properties": {
+												"data": {
+													"$ref": "#/components/schemas/IUserInfo"
+												},
+												"message": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"data",
+												"message"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "phone",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/users/{id}": {
+			"put": {
+				"operationId": "ActiveUser",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -607,48 +772,25 @@
 				"security": [
 					{
 						"jwt": [
-							"user"
+							"admin"
 						]
 					}
 				],
-				"parameters": []
-			}
-		},
-		"/users/sign-jwt-token": {
-			"post": {
-				"operationId": "SignJwtToken",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"type": "string"
-								}
-							}
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
 						}
 					}
-				},
-				"tags": [
-					"Users"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/ISignJWT"
-							}
-						}
-					}
-				}
+				]
 			}
 		},
-		"/users/{userId}": {
+		"/users/get-all-user": {
 			"get": {
-				"operationId": "FindUserById",
+				"operationId": "GetAllUser",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -660,7 +802,10 @@
 										{
 											"properties": {
 												"data": {
-													"$ref": "#/components/schemas/UserResDTO"
+													"items": {
+														"$ref": "#/components/schemas/IUserInfo"
+													},
+													"type": "array"
 												},
 												"message": {
 													"type": "string"
@@ -681,17 +826,14 @@
 				"tags": [
 					"Users"
 				],
-				"security": [],
-				"parameters": [
+				"security": [
 					{
-						"in": "path",
-						"name": "userId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
+						"jwt": [
+							"admin"
+						]
 					}
-				]
+				],
+				"parameters": []
 			}
 		}
 	},

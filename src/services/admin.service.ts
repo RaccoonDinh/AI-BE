@@ -12,16 +12,12 @@ import {
   LOGIN_SUCCESS,
 } from "../constants";
 import { HttpStatus } from "../constants/enum";
-import {
-  AdminLogin,
-  ICreateAdmin,
-  ResAdmin,
-} from "../dto/requests";
-import { AdminResDTO } from "../dto/responses";
+import { AdminLogin, ICreateAdmin, ResAdmin } from "../dto/requests";
+import { AdminResDTO, UserResDTO } from "../dto/responses";
 import Admin from "../models/admin";
 import { handleResFailure, handlerResSuccess } from "../utils/handle-response";
 import { comparePassword, hashPasswords } from "../utils/hash-password";
-import * as jwt from "jsonwebtoken";
+import { AuthenticationService } from "./authentication.service";
 
 export class AdminService {
   static async create(adminCreationParams: ICreateAdmin) {
@@ -62,13 +58,18 @@ export class AdminService {
         );
       }
 
-      return handlerResSuccess(
-        LOGIN_SUCCESS,
-        jwt.sign(
-          { userId: admin.id, role: ["admin"] },
-          process.env.JWT_SECRET || ""
-        )
-      );
+      const token = AuthenticationService.generateToken({
+        userId: admin._id.toString(),
+        role: "admin",
+      });
+
+      const res: UserResDTO = {
+        _id: admin._id.toString(),
+        name: admin.name,
+        token: token,
+      };
+
+      return handlerResSuccess(LOGIN_SUCCESS, res);
     } catch (error: any) {
       return handleResFailure(
         error.error || LOGIN_FAIL,
