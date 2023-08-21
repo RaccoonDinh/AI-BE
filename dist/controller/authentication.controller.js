@@ -25,7 +25,7 @@ exports.AuthenticationController = void 0;
 const tsoa_1 = require("tsoa");
 const authentication_service_1 = require("../services/authentication.service");
 const services_1 = require("../services");
-let AuthenticationController = class AuthenticationController extends tsoa_1.Controller {
+let AuthenticationController = exports.AuthenticationController = class AuthenticationController extends tsoa_1.Controller {
     loginUser(dto) {
         return __awaiter(this, void 0, void 0, function* () {
             return authentication_service_1.AuthenticationService.login(dto);
@@ -63,8 +63,7 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AuthenticationController.prototype, "createUser", null);
-AuthenticationController = __decorate([
+exports.AuthenticationController = AuthenticationController = __decorate([
     (0, tsoa_1.Tags)("login"),
     (0, tsoa_1.Route)("authenticate")
 ], AuthenticationController);
-exports.AuthenticationController = AuthenticationController;

@@ -15,25 +15,12 @@ const cloudinary_1 = __importDefault(require("./configs/cloudinary"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT;
-const allowedOrigins = ['https://aitools.vietnamstartup.io/', 'http://localhost:3000']; // Thay thế bằng tên miền frontend thực tế của bạn và thêm bất kỳ tên miền khác bạn muốn cho phép.
-const corsOptions = {
-    origin: (origin, callback) => {
-        if (allowedOrigins.includes(origin) || !origin) {
-            callback(null, true);
-        }
-        else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-};
-app.use((0, cors_1.default)(corsOptions));
+app.use((0, cors_1.default)());
 app.use(body_parser_1.default.urlencoded({
     extended: true,
 }));
 app.use(body_parser_1.default.json());
 app.use((0, cors_1.default)());
-// app.use(passport.initialize());
-// app.use(passport.session());
 (0, mongodb_1.default)()
     .then(() => {
     console.log("⚡[Server]: Connect to database success");

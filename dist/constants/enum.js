@@ -16,4 +16,4 @@ var HttpStatus;
     HttpStatus[HttpStatus["NOT_IMPLEMENT"] = 501] = "NOT_IMPLEMENT";
     HttpStatus[HttpStatus["BAD_GATWAGE"] = 502] = "BAD_GATWAGE";
     HttpStatus[HttpStatus["SERVICE_UNAVAILABLE"] = 503] = "SERVICE_UNAVAILABLE";
-})(HttpStatus = exports.HttpStatus || (exports.HttpStatus = {}));
+})(HttpStatus || (exports.HttpStatus = HttpStatus = {}));

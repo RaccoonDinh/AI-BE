@@ -1,29 +1,6 @@
 "use strict";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // src/users/usersService.ts
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -43,7 +20,7 @@ const enum_1 = require("../constants/enum");
 const admin_1 = __importDefault(require("../models/admin"));
 const handle_response_1 = require("../utils/handle-response");
 const hash_password_1 = require("../utils/hash-password");
-const jwt = __importStar(require("jsonwebtoken"));
+const authentication_service_1 = require("./authentication.service");
 class AdminService {
     static create(adminCreationParams) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -76,7 +53,16 @@ class AdminService {
                 if (!check) {
                     return (0, handle_response_1.handleResFailure)(constants_1.ERROR_PASSWORD_NOT_MATCH, enum_1.HttpStatus.NOT_ACCEPTABLE);
                 }
-                return (0, handle_response_1.handlerResSuccess)(constants_1.LOGIN_SUCCESS, jwt.sign({ userId: admin.id, role: ["admin"] }, process.env.JWT_SECRET || ""));
+                const token = authentication_service_1.AuthenticationService.generateToken({
+                    userId: admin._id.toString(),
+                    role: "admin",
+                });
+                const res = {
+                    _id: admin._id.toString(),
+                    name: admin.name,
+                    token: token,
+                };
+                return (0, handle_response_1.handlerResSuccess)(constants_1.LOGIN_SUCCESS, res);
             }
             catch (error) {
                 return (0, handle_response_1.handleResFailure)(error.error || constants_1.LOGIN_FAIL, error.statusCode || enum_1.HttpStatus.BAD_REQUEST);
@@ -87,13 +73,13 @@ class AdminService {
         return __awaiter(this, void 0, void 0, function* () {
             const admin = yield admin_1.default.findById(adminId);
             if (!admin) {
-                return (0, handle_response_1.handleResFailure)(constants_1.ERROR_GET_USER_BY_ID, enum_1.HttpStatus.NOT_FOUND);
+                return (0, handle_response_1.handleResFailure)(constants_1.ERROR_GET_USER, enum_1.HttpStatus.NOT_FOUND);
             }
             const res = {
                 name: admin === null || admin === void 0 ? void 0 : admin.name,
                 username: admin === null || admin === void 0 ? void 0 : admin.username,
             };
-            return (0, handle_response_1.handlerResSuccess)(constants_1.FIND_USER_BY_ID_SUCCESS, res);
+            return (0, handle_response_1.handlerResSuccess)(constants_1.FIND_USER_SUCCESS, res);
         });
     }
 }

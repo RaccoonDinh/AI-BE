@@ -16,7 +16,7 @@ exports.AdminController = void 0;
 // src/users/usersController.ts
 const tsoa_1 = require("tsoa");
 const admin_service_1 = require("../services/admin.service");
-let AdminController = class AdminController extends tsoa_1.Controller {
+let AdminController = exports.AdminController = class AdminController extends tsoa_1.Controller {
     getAdminById(request) {
         return admin_service_1.AdminService.findAdminById(request.user.userId);
     }
@@ -49,8 +49,7 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], AdminController.prototype, "login", null);
-AdminController = __decorate([
+exports.AdminController = AdminController = __decorate([
     (0, tsoa_1.Tags)("Admin"),
     (0, tsoa_1.Route)("admin")
 ], AdminController);
-exports.AdminController = AdminController;

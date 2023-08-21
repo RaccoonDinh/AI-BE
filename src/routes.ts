@@ -7,6 +7,8 @@ import { AdminController } from './controller/admin.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthenticationController } from './controller/authentication.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { PaymentsController } from './controller/payment.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { UsersController } from './controller/user.controller';
 import { expressAuthentication } from './middleware/authentication';
 // @ts-ignore - no great way to install types from subpackage
@@ -283,6 +285,31 @@ export function RegisterRoutes(app: Router) {
 
 
               const promise = controller.createUser.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/api/v1/payments/get-client-id',
+            authenticateMiddleware([{"jwt":["user"]}]),
+            ...(fetchMiddlewares<RequestHandler>(PaymentsController)),
+            ...(fetchMiddlewares<RequestHandler>(PaymentsController.prototype.getClientID)),
+
+            function PaymentsController_getClientID(request: any, response: any, next: any) {
+            const args = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new PaymentsController();
+
+
+              const promise = controller.getClientID.apply(controller, validatedArgs as any);
               promiseHandler(controller, promise, response, undefined, next);
             } catch (err) {
                 return next(err);

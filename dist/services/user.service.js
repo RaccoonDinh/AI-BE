@@ -20,6 +20,7 @@ const enum_1 = require("../constants/enum");
 const user_1 = __importDefault(require("../models/user"));
 const handle_response_1 = require("../utils/handle-response");
 const hash_password_1 = require("../utils/hash-password");
+const authentication_service_1 = require("./authentication.service");
 class UsersService {
     static create(userCreationParams) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -34,11 +35,17 @@ class UsersService {
                     phone: userCreationParams.phone,
                     password: (0, hash_password_1.hashPasswords)(userCreationParams.password),
                     address: userCreationParams.address,
+                    active: false,
                 });
                 yield user.save();
+                const token = authentication_service_1.AuthenticationService.generateToken({
+                    userId: user._id.toString(),
+                    role: "user",
+                });
                 const userRes = {
                     _id: user._id.toString(),
                     name: user.name,
+                    token: token,
                 };
                 return (0, handle_response_1.handlerResSuccess)(constants_1.CREATE_USER_SUCCESS, userRes);
             }
@@ -57,12 +64,13 @@ class UsersService {
                 const userRes = {
                     _id: user._id.toString(),
                     name: user.name,
+                    token: "",
                 };
-                return (0, handle_response_1.handlerResSuccess)(constants_1.FIND_USER_BY_ID_SUCCESS, userRes);
+                return (0, handle_response_1.handlerResSuccess)(constants_1.FIND_USER_SUCCESS, userRes);
             }
             catch (error) {
                 console.log("error: ", error);
-                return (0, handle_response_1.handleResFailure)(error.error ? error.error : constants_1.ERROR_GET_USER_BY_ID, error.statusCode ? error.statusCode : enum_1.HttpStatus.BAD_REQUEST);
+                return (0, handle_response_1.handleResFailure)(error.error ? error.error : constants_1.ERROR_GET_USER, error.statusCode ? error.statusCode : enum_1.HttpStatus.BAD_REQUEST);
             }
         });
     }
@@ -74,16 +82,82 @@ class UsersService {
                     return (0, handle_response_1.handleResFailure)(constants_1.ERROR_USER_NOT_FOUND, enum_1.HttpStatus.NOT_FOUND);
                 }
                 const res = {
+                    _id: user._id,
                     name: user.name,
                     email: user.email,
                     phone: user.phone,
                     address: user.address,
+                    active: user.active,
                 };
-                return (0, handle_response_1.handlerResSuccess)(constants_1.FIND_USER_BY_ID_SUCCESS, res);
+                return (0, handle_response_1.handlerResSuccess)(constants_1.FIND_USER_SUCCESS, res);
             }
             catch (error) {
                 console.log("error: ", error);
-                return (0, handle_response_1.handleResFailure)(error.error ? error.error : constants_1.ERROR_GET_USER_BY_ID, error.statusCode ? error.statusCode : enum_1.HttpStatus.BAD_REQUEST);
+                return (0, handle_response_1.handleResFailure)(error.error ? error.error : constants_1.ERROR_GET_USER, error.statusCode ? error.statusCode : enum_1.HttpStatus.BAD_REQUEST);
+            }
+        });
+    }
+    static findUserByPhone(phone) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const user = yield user_1.default.findOne({ phone: phone });
+                if (!user) {
+                    return (0, handle_response_1.handleResFailure)(constants_1.ERROR_USER_NOT_FOUND, enum_1.HttpStatus.NOT_FOUND);
+                }
+                const res = {
+                    _id: user._id.toString(),
+                    name: user.name,
+                    email: user.email,
+                    phone: user.phone,
+                    address: user.address,
+                    active: user.active,
+                };
+                return (0, handle_response_1.handlerResSuccess)(constants_1.FIND_USER_SUCCESS, res);
+            }
+            catch (error) {
+                console.log("error: ", error);
+                return (0, handle_response_1.handleResFailure)(error.error ? error.error : constants_1.ERROR_GET_USER, error.statusCode ? error.statusCode : enum_1.HttpStatus.BAD_REQUEST);
+            }
+        });
+    }
+    static activeUser(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const user = yield user_1.default.findOne({ _id: id });
+                if (!user) {
+                    return (0, handle_response_1.handleResFailure)(constants_1.ERROR_USER_NOT_FOUND, enum_1.HttpStatus.NOT_FOUND);
+                }
+                user.active = true;
+                user.save();
+                return (0, handle_response_1.handlerResSuccess)(constants_1.ACTIVE_USER_SUCCESS, true);
+            }
+            catch (error) {
+                console.log("error: ", error);
+                return (0, handle_response_1.handleResFailure)(error.error ? error.error : constants_1.ERROR_GET_USER, error.statusCode ? error.statusCode : enum_1.HttpStatus.BAD_REQUEST);
+            }
+        });
+    }
+    static getAllUser() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const userArray = [];
+                const allUser = yield user_1.default.find({});
+                if (!allUser) {
+                    return (0, handle_response_1.handleResFailure)(constants_1.ERROR_USER_NOT_FOUND, enum_1.HttpStatus.NOT_FOUND);
+                }
+                allUser.map((user) => userArray.push({
+                    _id: user._id.toString(),
+                    name: user.name,
+                    phone: user.phone,
+                    email: user.email,
+                    address: user.address,
+                    active: user.active,
+                }));
+                return (0, handle_response_1.handlerResSuccess)(constants_1.FIND_USER_SUCCESS, userArray);
+            }
+            catch (error) {
+                console.log("error", error);
+                return;
             }
         });
     }

@@ -49,7 +49,7 @@ exports.UsersController = void 0;
 const tsoa_1 = require("tsoa");
 const services_1 = require("../services");
 const jwt = __importStar(require("jsonwebtoken"));
-let UsersController = class UsersController extends tsoa_1.Controller {
+let UsersController = exports.UsersController = class UsersController extends tsoa_1.Controller {
     createUser(dto) {
         return __awaiter(this, void 0, void 0, function* () {
             return services_1.UsersService.create(dto);
@@ -58,11 +58,17 @@ let UsersController = class UsersController extends tsoa_1.Controller {
     signJwtToken(dto) {
         return jwt.sign({ userId: dto.userId, role: [dto.role] }, process.env.JWT_SECRET || "");
     }
-    getUser(request) {
+    findUserById(request) {
         return services_1.UsersService.getUser(request.user.userId);
     }
-    findUserById(userId) {
-        return services_1.UsersService.findUserById(userId);
+    getUserByPhone(phone) {
+        return services_1.UsersService.findUserByPhone(phone);
+    }
+    activeUser(id) {
+        return services_1.UsersService.activeUser(id);
+    }
+    getAllUser() {
+        return services_1.UsersService.getAllUser();
     }
 };
 __decorate([
@@ -81,21 +87,36 @@ __decorate([
 ], UsersController.prototype, "signJwtToken", null);
 __decorate([
     (0, tsoa_1.Security)("jwt", ["user"]),
-    (0, tsoa_1.Get)(),
+    (0, tsoa_1.Get)("/get-user"),
     __param(0, (0, tsoa_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
-], UsersController.prototype, "getUser", null);
+], UsersController.prototype, "findUserById", null);
 __decorate([
-    (0, tsoa_1.Get)("/{userId}"),
+    (0, tsoa_1.Security)("jwt", ["admin"]),
+    (0, tsoa_1.Get)("/find-user-by-phone"),
+    __param(0, (0, tsoa_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "getUserByPhone", null);
+__decorate([
+    (0, tsoa_1.Security)("jwt", ["admin"]),
+    (0, tsoa_1.Put)("/{id}"),
     __param(0, (0, tsoa_1.Path)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
-], UsersController.prototype, "findUserById", null);
-UsersController = __decorate([
+], UsersController.prototype, "activeUser", null);
+__decorate([
+    (0, tsoa_1.Security)("jwt", ["admin"]),
+    (0, tsoa_1.Get)("/get-all-user"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "getAllUser", null);
+exports.UsersController = UsersController = __decorate([
     (0, tsoa_1.Tags)("Users"),
     (0, tsoa_1.Route)("users")
 ], UsersController);
-exports.UsersController = UsersController;

@@ -8,6 +8,7 @@ exports.UserSchema = new mongoose_1.Schema({
     password: { type: String, require: true },
     phone: { type: String, require: true },
     address: { type: String, require: true },
+    active: { type: Boolean, require: true },
 }, { timestamps: true });
 const User = (0, mongoose_1.model)("User", exports.UserSchema);
 exports.default = User;
